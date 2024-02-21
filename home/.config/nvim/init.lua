@@ -9,7 +9,7 @@ vim.g.mapleader = " "
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.undofile = true --persistent history
-vim.opt.undodir = "${HOME}/.config/nvim/undo"
+vim.opt.undodir = vim.fn.stdpath('config') .. '/undo'
 
 
 -- Standard remap
