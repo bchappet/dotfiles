@@ -10,6 +10,11 @@ vim.opt.relativenumber = true
 vim.opt.undofile = true --persistent history
 vim.opt.undodir = vim.fn.stdpath('config') .. '/undo'
 
+-- set auto save
+vim.opt.hidden = false
+vim.opt.autowrite = true
+vim.opt.autowriteall = true
+
 
 -- Standard remap
 
@@ -72,7 +77,7 @@ vim.cmd[[colorscheme tokyonight]]
 -- configure tmux
 local nvim_tmux_nav = require('nvim-tmux-navigation')
 nvim_tmux_nav.setup {
-    disable_when_zoomed = true -- defaults to false
+    disable_when_zoomed = false -- defaults to false
 }
 
 -- lua-line
@@ -105,10 +110,10 @@ vim.keymap.set({'n', 'i', 'v'},"<C-p>", "<cmd>Telescope oldfiles<cr>", opt)
 vim.keymap.set({'n', 'i', 'v'},"<C-s>", '<esc>:w<cr>', opt)
 vim.keymap.set({'n', 'i', 'v'}, "<C-\\>", ":Pydocstring<cr>", opt)
 
-vim.keymap.set('n', "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft, opt)
-vim.keymap.set('n', "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown, opt)
-vim.keymap.set('n', "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp, opt)
-vim.keymap.set('n', "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight, opt)
+vim.keymap.set({'n', 'i'}, "<C-h>", "<esc>:w <bar> NvimTmuxNavigateLeft<CR>", opt)
+vim.keymap.set({'n', 'i'}, "<C-j>", "<esc>:w <bar> NvimTmuxNavigateDown<CR>", opt)
+vim.keymap.set({'n', 'i'}, "<C-k>", "<esc>:w <bar> NvimTmuxNavigateUp<CR>", opt)
+vim.keymap.set({'n', 'i'}, "<C-l>", "<esc>:w <bar> NvimTmuxNavigateRight<CR>", opt)
 
 -- Other Leader command
 vim.keymap.set('n', '<leader>d',':bd<CR>', opt)
