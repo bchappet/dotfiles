@@ -2,7 +2,6 @@ local vim = vim
 local Plug = vim.fn['plug#']
 opt = {noremap=true, silent=false}
 
-
 -- Standard vim options
 
 vim.g.mapleader = " "
@@ -31,6 +30,8 @@ Plug('nvim-lua/plenary.nvim')
 Plug('nvim-telescope/telescope.nvim', { ['tag']= '0.1.5' })
 Plug('jiaoshijie/undotree')
 Plug('alexghergh/nvim-tmux-navigation')
+Plug('nvim-lualine/lualine.nvim')
+Plug('nvim-tree/nvim-web-devicons')
 Plug('codota/tabnine-nvim', { ['do']= './dl_binaries.sh' })
 
 vim.call('plug#end')
@@ -73,6 +74,19 @@ local nvim_tmux_nav = require('nvim-tmux-navigation')
 nvim_tmux_nav.setup {
     disable_when_zoomed = true -- defaults to false
 }
+
+-- lua-line
+require('lualine').setup({
+    tabline = {
+        lualine_a = {},
+        lualine_b = {'branch'},
+        lualine_c = {'filename'},
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = {}
+    },
+    sections = {lualine_c = {'lsp_progress'}, lualine_x = {'tabnine'}}
+})
 
 -- tab nine smart autocompletion
 require('tabnine').setup({
