@@ -11,9 +11,16 @@ vim.opt.undofile = true --persistent history
 vim.opt.undodir = vim.fn.stdpath('config') .. '/undo'
 
 -- set auto save
-vim.opt.hidden = false
-vim.opt.autowrite = true
-vim.opt.autowriteall = true
+vim.opt.hidden = true
+-- Use autocmd instead of autowrite/autowriteall to check if buffer is writable
+vim.api.nvim_create_autocmd({"FocusLost", "BufLeave"}, {
+  callback = function()
+    local bufname = vim.api.nvim_buf_get_name(0)
+    if bufname ~= '' and vim.bo.modifiable and not vim.bo.readonly and vim.bo.buftype == '' then
+      vim.cmd('silent! write')
+    end
+  end,
+})
 
 
 -- Standard remap
@@ -29,39 +36,22 @@ vim.keymap.set('n',            '<S-Tab>', ':bp<cr>', opt)
 vim.call('plug#begin')
 
 Plug('folke/tokyonight.nvim')
-Plug('folke/which-key.nvim')
+Plug('neovim/nvim-lspconfig')
 Plug('heavenshell/vim-pydocstring', { ['do'] = 'make install', ['for'] = 'python' })
+Plug('nvim-treesitter/nvim-treesitter')
 Plug('nvim-lua/plenary.nvim')
-Plug('nvim-telescope/telescope.nvim', { ['tag']= '0.1.5' })
+Plug('nvim-telescope/telescope.nvim', {['tag']='0.1.8'})
 Plug('jiaoshijie/undotree')
 Plug('alexghergh/nvim-tmux-navigation')
 Plug('nvim-lualine/lualine.nvim')
 Plug('nvim-tree/nvim-web-devicons')
-Plug('codota/tabnine-nvim', { ['do']= './dl_binaries.sh' })
 
 vim.call('plug#end')
 
-
--- Configure which-key
---
-vim.opt.timeoutlen = 200
-local wk = require("which-key")
-
-wk.register({
-  f = {
-    name = "file", -- optional group name
-    f = { "<cmd>Telescope find_files<cr>", "Find File" },
-    r = { "<cmd>Telescope oldfiles<cr>", "Recent File" },
-    g = { "<cmd>Telescope live_grep<cr>", "Find Grep" }, 
-    b = { "<cmd>Telescope buffers<cr>", "Find Buffers" }, 
-    h = { "<cmd>Telescope help_tags<cr>", "Help Tags" }, 
-  },
-  c = {
-    name = 'code',
-    m = { "<cmd>Mason<cr>", "Mason"},
-    p = { "<cmd>Pydocstring<cr>", "Python Documentation"},
-  },
-}, { prefix = "<leader>" })
+-- Configure LSP
+vim.lsp.enable('pyright')
+-- Jumps to the definition of the symbol under the cursor.
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
 
 -- Configure vim-pydocstring
 vim.g.pydocstring_enable_mapping = 0
@@ -71,7 +61,27 @@ vim.g.pydocstring_formatter = 'google'
 require('undotree').setup()
 vim.keymap.set('n', '<F5>', require('undotree').toggle, opt)
 
--- colorscheme 
+-- Configure treesitter
+require('nvim-treesitter.configs').setup({
+  -- Install parsers for these languages
+  ensure_installed = { "lua", "python", "vim", "vimdoc", "bash", "markdown" },
+
+  -- Auto-install missing parsers when entering buffer
+  auto_install = true,
+
+  -- Enable syntax highlighting
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+
+  -- Enable indentation
+  indent = {
+    enable = true
+  },
+})
+
+-- colorscheme
 vim.cmd[[colorscheme tokyonight]]
 
 -- configure tmux
@@ -90,34 +100,29 @@ require('lualine').setup({
         lualine_y = {},
         lualine_z = {}
     },
-    sections = {lualine_c = {'lsp_progress'}, lualine_x = {'tabnine'}}
+    sections = {lualine_c = {'lsp_progress'}}
 })
 
--- tab nine smart autocompletion
-require('tabnine').setup({
-  disable_auto_comment=true,
-  accept_keymap="<Tab>",
-  dismiss_keymap = "<C-]>",
-
-  debounce_ms = 800,
-  suggestion_color = {gui = "#808080", cterm = 244},
-  exclude_filetypes = {"TelescopePrompt", "NvimTree"},
-  log_file_path = nil, -- absolute path to Tabnine log file
-})
 
 -- Ctrl commands
 vim.keymap.set({'n', 'i', 'v'},"<C-p>", "<cmd>Telescope oldfiles<cr>", opt)
-vim.keymap.set({'n', 'i', 'v'},"<C-s>", '<esc>:w<cr>', opt)
+vim.keymap.set({'n', 'i', 'v'},"<C-n>", "<cmd>Telescope find_files<cr>", opt)
 vim.keymap.set({'n', 'i', 'v'}, "<C-\\>", ":Pydocstring<cr>", opt)
 
-vim.keymap.set({'n', 'i'}, "<C-h>", "<esc>:w <bar> NvimTmuxNavigateLeft<CR>", opt)
-vim.keymap.set({'n', 'i'}, "<C-j>", "<esc>:w <bar> NvimTmuxNavigateDown<CR>", opt)
-vim.keymap.set({'n', 'i'}, "<C-k>", "<esc>:w <bar> NvimTmuxNavigateUp<CR>", opt)
-vim.keymap.set({'n', 'i'}, "<C-l>", "<esc>:w <bar> NvimTmuxNavigateRight<CR>", opt)
+-- Helper function to save only if buffer is writable
+local function safe_write()
+  local bufname = vim.api.nvim_buf_get_name(0)
+  if bufname ~= '' and vim.bo.modifiable and not vim.bo.readonly and vim.bo.buftype == '' then
+    vim.cmd('write')
+  end
+end
+
+vim.keymap.set({'n', 'i'}, "<C-h>", function() safe_write(); nvim_tmux_nav.NvimTmuxNavigateLeft() end, opt)
+vim.keymap.set({'n', 'i'}, "<C-j>", function() safe_write(); nvim_tmux_nav.NvimTmuxNavigateDown() end, opt)
+vim.keymap.set({'n', 'i'}, "<C-k>", function() safe_write(); nvim_tmux_nav.NvimTmuxNavigateUp() end, opt)
+vim.keymap.set({'n', 'i'}, "<C-l>", function() safe_write(); nvim_tmux_nav.NvimTmuxNavigateRight() end, opt)
 
 -- Other Leader command
 vim.keymap.set('n', '<leader>d',':bd<CR>', opt)
 vim.keymap.set('n', '<leader>q',':q<CR>', opt)
 vim.keymap.set('n', '<leader>w','<C-w>', opt)
-
--- duplicate but faster (and I'm so used to it...)
