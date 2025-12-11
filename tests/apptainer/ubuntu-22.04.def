@@ -1,0 +1,62 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%files
+    # Copy entire dotfiles repo into container
+    . /opt/dotfiles
+
+%post
+    # Update package list and install prerequisites
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y \
+        git \
+        curl \
+        ca-certificates \
+        tar \
+        gzip \
+        python3 \
+        tmux
+
+    # Configure git to trust all directories (for any user)
+    git config --system --add safe.directory '*'
+
+%runscript
+    # Prepare clean test environment
+    echo "Preparing test environment..."
+
+    # Create a clean home directory for testing
+    export HOME=/tmp/test-home
+    mkdir -p "$HOME"
+
+    # Copy dotfiles to writable location
+    rm -rf /tmp/dotfiles-test
+    cp -a /opt/dotfiles /tmp/dotfiles-test
+
+    # Create a sudo wrapper that just executes commands
+    # (real sudo doesn't work in Apptainer containers)
+    echo "Setting up container environment..."
+    mkdir -p /tmp/bin
+    cat > /tmp/bin/sudo <<'EOF'
+#!/bin/bash
+# Sudo wrapper for container - just execute the command
+exec "$@"
+EOF
+    chmod +x /tmp/bin/sudo
+
+    # Run installation as the current user
+    echo "Running dotfiles installation..."
+    cd /tmp/dotfiles-test
+    PATH=/tmp/bin:$PATH bash ./install
+
+%labels
+    Author benoit
+    Version 1.0
+    Description Ubuntu 22.04 test environment for dotfiles installation
+
+%help
+    This container tests the dotfiles installation on Ubuntu 22.04.
+
+    Usage:
+        apptainer build ubuntu-22.04.sif ubuntu-22.04.def
+        apptainer run ubuntu-22.04.sif

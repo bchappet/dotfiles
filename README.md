@@ -97,6 +97,64 @@ git pull
 
 Edit the files in the `home/` directory to customize your configurations. Changes will take effect after running `./install` again or creating the symlinks manually.
 
+## Testing
+
+The dotfiles installation can be tested in a clean Ubuntu 22.04 environment using Apptainer containers.
+
+### Prerequisites
+
+- [Apptainer](https://apptainer.org/docs/admin/main/installation.html) installed on your system
+
+### Running Tests
+
+Run all tests with a single command:
+
+```bash
+./tests/run-tests.sh
+```
+
+This will:
+1. Build an Ubuntu 22.04 Apptainer container (if not already built)
+2. Run the dotfiles installation inside the container
+3. Verify the installation completed successfully
+4. Clean up the container image (on success)
+
+### Test Options
+
+```bash
+./tests/run-tests.sh --help        # Show help
+./tests/run-tests.sh --verbose     # Enable verbose output
+./tests/run-tests.sh --keep        # Keep container after tests
+./tests/run-tests.sh --rebuild     # Force rebuild of container
+```
+
+### Debugging Failed Tests
+
+If tests fail, the container image is kept for debugging:
+
+```bash
+# Inspect the container interactively
+apptainer shell tests/ubuntu-22.04.sif
+
+# Run the container manually
+apptainer run tests/ubuntu-22.04.sif
+```
+
+### What Gets Tested
+
+- Installation script runs without errors
+- Symlinks are created correctly
+- Required directories are created
+- Tools (nvim, uv) are available in PATH
+
+### Benefits of Container Testing
+
+- **Clean environment** - Each test starts from a fresh Ubuntu 22.04 system
+- **No root required** - Apptainer runs without sudo (unlike Docker)
+- **Reproducible** - Same results on any system with Apptainer installed
+- **Fast** - Container images are cached for quick re-runs
+- **Safe** - Tests run in isolation, won't affect your system
+
 ## Structure
 
 ```
