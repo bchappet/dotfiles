@@ -8,6 +8,8 @@ case $- in
 *) return ;;
 esac
 
+export EDITOR=nvim
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -116,6 +118,10 @@ if ! shopt -oq posix; then
 	fi
 fi
 
-export PATH="$PATH:/opt/nvim-linux64/bin"
+# Add uv and Python tools to PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# Add Neovim to PATH
+export PATH="$HOME/.local/nvim-linux-x86_64/bin:$PATH"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

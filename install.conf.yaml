@@ -1,0 +1,34 @@
+- defaults:
+    link:
+      relink: true
+      create: true
+
+- clean: ['~']
+
+- create:
+    - ~/.config
+    - ~/.config/nvim/undo
+    - ~/.local/share/nvim/site/autoload
+
+- link:
+    ~/.bashrc: home/.bashrc
+    ~/.tmux.conf: home/.tmux.conf
+    ~/.config/nvim/init.lua: home/.config/nvim/init.lua
+
+- shell:
+    - description: Installing uv and Python tools (pyright, ruff)
+      command: ./scripts/setup_python.sh
+      stdout: true
+      stderr: true
+    - description: Installing Tmux and Tmux Plugin Manager (tpm)
+      command: ./scripts/install_tmux.sh
+      stdout: true
+      stderr: true
+    - description: Installing Neovim
+      command: ./scripts/install_neovim.sh
+      stdout: true
+      stderr: true
+    - description: Installing vim-plug and Neovim plugins
+      command: ./scripts/install_vim_plug.sh
+      stdout: true
+      stderr: true
