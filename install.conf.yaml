@@ -12,7 +12,10 @@
     - ~/.tmux/tmp
 
 - link:
-    ~/.bashrc: home/.bashrc
+    ~/.bashrc: 
+      force: true
+      backup: true
+      path: home/.bashrc
     ~/.tmux.conf: home/.tmux.conf
     ~/.config/nvim/init.lua: home/.config/nvim/init.lua
 

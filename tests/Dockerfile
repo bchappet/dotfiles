@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     python3 \
+    python3-venv \
+    python-is-python3 \
     make \
     automake \
     autoconf \
@@ -14,7 +16,6 @@ RUN apt-get update && apt-get install -y \
     libncurses5-dev \
     libncursesw5-dev \
     yacc \
-    sudo \
     tmux \
     && rm -rf /var/lib/apt/lists/*
 
@@ -33,4 +34,4 @@ COPY --chown=testuser:testuser . /home/testuser/dotfiles
 WORKDIR /home/testuser/dotfiles
 
 # Run installation and verification
-CMD ["bash", "-c", "rm -f ~/.bashrc && ./install && source ~/.bashrc && bash tests/verify-install.sh"]
+CMD ["bash", "-c", "./install && source ~/.bashrc && bash tests/verify-install.sh"]

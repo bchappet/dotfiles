@@ -45,22 +45,31 @@ else
     echo -e "${YELLOW}!${NC} Warning: undo directory not found"
 fi
 
-# Update PATH to include installed tools (bashrc won't work in non-interactive shell)
-export PATH="$HOME/.local/bin:$HOME/.local/nvim-linux-x86_64/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # Check 4: Basic tool availability (optional - can be extended)
 echo -n "Checking if nvim is available... "
 if command_exists nvim; then
     echo -e "${GREEN}✓${NC} ($(nvim --version | head -1))"
 else
-    echo -e "${YELLOW}!${NC} Warning: nvim not found in PATH"
+    echo -e "${RED}✗${NC} nvim not found in PATH"
+    FAILED=1
 fi
 
 echo -n "Checking if uv is available... "
 if command_exists uv; then
     echo -e "${GREEN}✓${NC} ($(uv --version))"
 else
-    echo -e "${YELLOW}!${NC} Warning: uv not found in PATH"
+    echo -e "${RED}✗${NC} uv not found in PATH"
+    FAILED=1
+fi
+
+echo -n "Checking if tmux is available... "
+if command_exists tmux; then
+    echo -e "${GREEN}✓${NC} ($(tmux -V))"
+else
+    echo -e "${RED}✗${NC} tmux not found in PATH"
+    FAILED=1
 fi
 
 echo ""
