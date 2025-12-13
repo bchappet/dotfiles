@@ -110,7 +110,7 @@ echo ""
 cd "$REPO_ROOT"
 
 if [ "$VERBOSE" = true ]; then
-    apptainer run --contain "$CONTAINER_IMAGE"
+    apptainer run --contain "$CONTAINER_IMAGE"  # contain to avoid mounting home
     TEST_EXIT_CODE=$?
 else
     apptainer run --contain "$CONTAINER_IMAGE" 2>&1

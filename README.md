@@ -1,5 +1,9 @@
 # dotfiles
 
+## TODO
+- check that install + check can be separated 
+- issue with tmux in apptainer: error creating /tmp/tmux-1000/default (No such file or directory)
+
 Personal dotfiles managed with [dotbot](https://github.com/anishathalye/dotbot) for multi-environment Unix setups (WSL, Ubuntu 22.04).
 
 ## Features

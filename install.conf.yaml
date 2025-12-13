@@ -9,6 +9,7 @@
     - ~/.config
     - ~/.config/nvim/undo
     - ~/.local/share/nvim/site/autoload
+    - ~/.tmux/tmp
 
 - link:
     ~/.bashrc: home/.bashrc

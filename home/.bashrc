@@ -122,8 +122,6 @@ fi
 
 # Add uv and Python tools to PATH
 export PATH="$HOME/.local/bin:$PATH"
-
-# Add Neovim to PATH
-export PATH="$HOME/.local/nvim-linux-x86_64/bin:$PATH"
+export PATH=/usr/local/go/bin:$PATH
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
