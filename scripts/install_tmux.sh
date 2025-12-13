@@ -25,6 +25,9 @@ else
     echo "tmux already installed ($(tmux -V))"
 fi
 
+# Ensure ~/.local/bin is in PATH for tpm installation
+export PATH="$HOME/.local/bin:$PATH"
+
 echo "Setting up Tmux Plugin Manager (tpm)..."
 
 TPM_DIR="$HOME/.tmux/plugins/tpm"
