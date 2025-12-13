@@ -1,0 +1,7 @@
+# Exclude test artifacts
+tests/my_overlay/
+tests/*.sif
+*.sif
+
+# Exclude any overlay directories
+**/overlay/

@@ -1,8 +1,7 @@
 # dotfiles
 
 ## TODO
-- check that install + check can be separated 
-- issue with tmux in apptainer: error creating /tmp/tmux-1000/default (No such file or directory)
+- check that install + check can be separated
 
 Personal dotfiles managed with [dotbot](https://github.com/anishathalye/dotbot) for multi-environment Unix setups (WSL, Ubuntu 22.04).
 
@@ -103,11 +102,11 @@ Edit the files in the `home/` directory to customize your configurations. Change
 
 ## Testing
 
-The dotfiles installation can be tested in a clean Ubuntu 22.04 environment using Apptainer containers.
+The dotfiles installation can be tested in a clean Ubuntu 22.04 environment using Docker.
 
 ### Prerequisites
 
-- [Apptainer](https://apptainer.org/docs/admin/main/installation.html) installed on your system
+- [Docker](https://docs.docker.com/get-docker/) installed on your system
 
 ### Running Tests
 
@@ -118,30 +117,29 @@ Run all tests with a single command:
 ```
 
 This will:
-1. Build an Ubuntu 22.04 Apptainer container (if not already built)
-2. Run the dotfiles installation inside the container
-3. Verify the installation completed successfully
-4. Clean up the container image (on success)
+1. Build a Docker image with Ubuntu 22.04
+2. Copy your local dotfiles into the container
+3. Run the installation inside the container
+4. Verify the installation completed successfully
 
 ### Test Options
 
 ```bash
 ./tests/run-tests.sh --help        # Show help
 ./tests/run-tests.sh --verbose     # Enable verbose output
-./tests/run-tests.sh --keep        # Keep container after tests
-./tests/run-tests.sh --rebuild     # Force rebuild of container
+./tests/run-tests.sh --no-cache    # Force rebuild without cache
 ```
 
 ### Debugging Failed Tests
 
-If tests fail, the container image is kept for debugging:
+If tests fail, you can debug interactively:
 
 ```bash
-# Inspect the container interactively
-apptainer shell tests/ubuntu-22.04.sif
+# Run the container with an interactive shell
+docker run --rm -it dotfiles-test:ubuntu-22.04 bash
 
-# Run the container manually
-apptainer run tests/ubuntu-22.04.sif
+# Or run the installation manually
+docker run --rm -it dotfiles-test:ubuntu-22.04 bash -c "./install"
 ```
 
 ### What Gets Tested
@@ -154,9 +152,9 @@ apptainer run tests/ubuntu-22.04.sif
 ### Benefits of Container Testing
 
 - **Clean environment** - Each test starts from a fresh Ubuntu 22.04 system
-- **No root required** - Apptainer runs without sudo (unlike Docker)
-- **Reproducible** - Same results on any system with Apptainer installed
-- **Fast** - Container images are cached for quick re-runs
+- **Tests local changes** - Uses your local dotfiles, not the GitHub version
+- **Reproducible** - Same results on any system with Docker installed
+- **Fast** - Docker caches layers for quick rebuilds
 - **Safe** - Tests run in isolation, won't affect your system
 
 ## Structure
