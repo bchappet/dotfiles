@@ -45,8 +45,21 @@ Plug('jiaoshijie/undotree')
 Plug('alexghergh/nvim-tmux-navigation')
 Plug('nvim-lualine/lualine.nvim')
 Plug('nvim-tree/nvim-web-devicons')
+Plug('mason-org/mason.nvim')
+Plug('williamboman/mason-lspconfig.nvim')
+-- Mini stuff (dependencies for completion)
+Plug('nvim-mini/mini.icons')
+Plug('nvim-mini/mini.snippets')
+Plug('nvim-mini/mini.completion')
 
 vim.call('plug#end')
+
+-- Configure Mason
+require('mason').setup()
+require('mason-lspconfig').setup({
+  ensure_installed = { 'pyright' },
+  automatic_installation = true,
+})
 
 -- Configure LSP
 vim.lsp.enable('pyright')
@@ -102,6 +115,36 @@ require('lualine').setup({
     },
     sections = {lualine_c = {'lsp_progress'}}
 })
+
+-- mini auto-completion + deps
+require('mini.icons').setup()
+require('mini.snippets').setup()
+require('mini.completion').setup({
+  delay = { completion = 10000000 },  -- Disable auto-completion (trigger manually with Tab)
+})
+
+-- Custom completion navigation with Tab/Shift-Tab
+vim.keymap.set('i', '<Tab>', function()
+  if vim.fn.pumvisible() == 1 then
+    return '<C-n>'  -- Navigate forward in menu
+  else
+    -- Check if there's text before cursor to complete
+    local col = vim.fn.col('.') - 1
+    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+      return '<Tab>'  -- Insert tab for indentation
+    else
+      return '<C-x><C-u>'  -- Trigger mini.completion
+    end
+  end
+end, { expr = true, noremap = true })
+
+vim.keymap.set('i', '<S-Tab>', function()
+  if vim.fn.pumvisible() == 1 then
+    return '<C-p>'
+  else
+    return '<S-Tab>'
+  end
+end, { expr = true, noremap = true })
 
 
 -- Ctrl commands
