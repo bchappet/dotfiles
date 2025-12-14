@@ -164,10 +164,9 @@ vim.keymap.set({'n', 'i', 'v'},"<C-p>", "<cmd>Telescope oldfiles<cr>", opt)
 vim.keymap.set({'n', 'i', 'v'},"<C-n>", "<cmd>Telescope find_files<cr>", opt)
 vim.keymap.set({'n', 'i', 'v'}, "<C-\\>", ":Pydocstring<cr>", opt)
 
--- Helper function to save only if buffer is writable
+-- Helper function to save only if buffer has a name and unsaved changes
 local function safe_write()
-  local bufname = vim.api.nvim_buf_get_name(0)
-  if bufname ~= '' and vim.bo.modifiable and not vim.bo.readonly and vim.bo.buftype == '' then
+  if vim.api.nvim_buf_get_name(0) ~= '' and vim.bo.modified then
     vim.cmd('write')
   end
 end
