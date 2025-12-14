@@ -61,6 +61,8 @@ Plug('williamboman/mason-lspconfig.nvim')
 Plug('nvim-mini/mini.icons')
 Plug('nvim-mini/mini.snippets')
 Plug('nvim-mini/mini.completion')
+-- Git
+Plug('tpope/vim-fugitive')
 
 vim.call('plug#end')
 
