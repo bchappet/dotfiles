@@ -1,6 +1,6 @@
 local vim = vim
 local Plug = vim.fn['plug#']
-opt = {noremap=true, silent=false}
+local opt = {noremap=true, silent=false}
 
 -- Standard vim options
 
@@ -69,14 +69,51 @@ vim.call('plug#end')
 -- Configure Mason
 require('mason').setup()
 require('mason-lspconfig').setup({
-  ensure_installed = { 'pyright' },
+  ensure_installed = { 'pyright', 'ruff' },
   automatic_installation = true,
 })
 
 -- Configure LSP
 vim.lsp.enable('pyright')
--- Jumps to the definition of the symbol under the cursor.
-vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+vim.lsp.enable('ruff')
+
+-- LSP navigation
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, opt)
+
+-- LSP diagnostics
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, {noremap = true, silent = true})
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, {noremap = true, silent = true})
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, {noremap = true, silent = true})
+vim.keymap.set('n', 'gl', vim.diagnostic.setloclist, {noremap = true, silent = true})
+
+-- Format with LSP (ruff for Python)
+-- Format current line in normal mode
+vim.keymap.set('n', '<leader>f', function()
+  local line = vim.fn.line('.')
+  local line_count = vim.api.nvim_buf_line_count(0)
+  vim.lsp.buf.format({
+    range = {
+      ['start'] = {line, 0},
+      ['end'] = {math.min(line + 1, line_count), 0}
+    }
+  })
+end, {noremap = true, silent = true})
+
+-- Format selection in visual mode
+vim.keymap.set('v', '<leader>f', function()
+  vim.lsp.buf.format()
+end, {noremap = true, silent = true})
+
+-- Format entire file
+vim.keymap.set('n', '<leader>F', vim.lsp.buf.format, {noremap = true, silent = true})
+
+-- Organize imports (ruff)
+vim.keymap.set('n', '<leader>i', function()
+  vim.lsp.buf.code_action({
+    context = { only = { 'source.organizeImports' } },
+    apply = true,
+  })
+end, {noremap = true, silent = true})
 
 -- Configure vim-pydocstring
 vim.g.pydocstring_enable_mapping = 0

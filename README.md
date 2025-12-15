@@ -1,8 +1,5 @@
 # dotfiles
 
-## TODO
-- check that install + check can be separated
-
 Personal dotfiles managed with [dotbot](https://github.com/anishathalye/dotbot) for multi-environment Unix setups (WSL, Ubuntu 22.04).
 
 ## Features
@@ -85,6 +82,29 @@ To update Python tools:
 uv tool upgrade pyright
 uv tool upgrade ruff
 ```
+
+## Neovim Keybindings
+
+### Python Formatting (Ruff)
+
+- `<Space>f` - Format current line (or selection in visual mode)
+- `<Space>F` - Format entire file
+- `<Space>i` - Organize imports
+
+### LSP
+
+- `gd` - Go to definition
+- `<Space>e` - Show diagnostic details in floating window
+- `[d` - Go to previous diagnostic
+- `]d` - Go to next diagnostic
+- `gl` - Open diagnostics list
+
+### Other
+
+- `<F5>` - Toggle undotree
+- `<Ctrl-p>` - Open recent files (Telescope)
+- `<Ctrl-n>` - Find files (Telescope)
+- `<Ctrl-\>` - Generate Python docstring
 
 ## Updating
 

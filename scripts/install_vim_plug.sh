@@ -21,4 +21,8 @@ echo "Installing Neovim plugins..."
 # Use full path since nvim may not be in PATH yet during installation
 "$HOME/.local/bin/nvim" --headless +PlugInstall +qa
 
+# Install stylua formatter via Mason
+echo "Installing stylua formatter..."
+"$HOME/.local/bin/nvim" --headless -c "MasonInstall stylua" -c "qall"
+
 echo "vim-plug setup complete!"
