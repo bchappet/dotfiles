@@ -13,11 +13,17 @@
 
 - link:
     ~/.bashrc: 
-      force: true
-      backup: true
+      force: false
       path: home/.bashrc
-    ~/.tmux.conf: home/.tmux.conf
-    ~/.config/nvim/init.lua: home/.config/nvim/init.lua
+    ~/.bash_prompt:
+      force: true
+      path: home/.bash_prompt
+    ~/.tmux.conf:
+      force: true
+      path: home/.tmux.conf
+    ~/.config/nvim/init.lua:
+      force: true
+      path: home/.config/nvim/init.lua
 
 - shell:
     - description: Installing uv and Python tools (pyright, ruff)

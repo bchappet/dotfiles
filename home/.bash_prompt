@@ -1,0 +1,39 @@
+# Custom prompt configuration
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+	debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# Custom prompt with git branch and short path
+parse_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+# Function to get short path (only last 2 directories)
+short_pwd() {
+    local pwd_length=25
+    local pwd_symbol="..."
+    local newPWD="${PWD/#$HOME/~}"
+
+    if [ ${#newPWD} -gt $pwd_length ]; then
+        local pwdoffset=$(( ${#newPWD} - $pwd_length + ${#pwd_symbol} ))
+        newPWD="${pwd_symbol}${newPWD:$pwdoffset:$pwd_length}"
+    fi
+    echo "$newPWD"
+}
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]$(short_pwd)\[\033[00m\]\[\033[01;33m\]$(parse_git_branch)\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u:$(short_pwd)$(parse_git_branch)\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm* | rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*) ;;
+esac
