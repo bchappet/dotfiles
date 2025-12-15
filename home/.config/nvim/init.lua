@@ -160,7 +160,7 @@ require('lualine').setup({
         lualine_c = {'filename'},
         lualine_x = {},
         lualine_y = {},
-        lualine_z = {}
+        lualine_z = {'tabs'}
     },
     sections = {lualine_c = {'lsp_progress'}}
 })
@@ -217,3 +217,11 @@ vim.keymap.set({'n', 'i'}, "<C-l>", function() safe_write(); nvim_tmux_nav.NvimT
 vim.keymap.set('n', '<leader>d',':bd<CR>', opt)
 vim.keymap.set('n', '<leader>q',':q<CR>', opt)
 vim.keymap.set('n', '<leader>w','<C-w>', opt)
+
+-- Set colorcolumn for Python files only
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "python",
+    callback = function()
+        vim.opt_local.colorcolumn = "100"
+    end,
+})
