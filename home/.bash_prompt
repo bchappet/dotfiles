@@ -23,10 +23,20 @@ short_pwd() {
     echo "$newPWD"
 }
 
+# Function to show virtual environment
+show_virtual_env() {
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo "($(basename "$VIRTUAL_ENV"))"
+    fi
+}
+
+# Disable default virtual environment prompt modification
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]$(short_pwd)\[\033[00m\]\[\033[01;33m\]$(parse_git_branch)\[\033[00m\]\$ '
+    PS1='\[\033[01;35m\]$(show_virtual_env)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[91m\]\h\[\033[00m\]:\[\033[01;34m\]$(short_pwd)\[\033[00m\]\[\033[01;33m\]$(parse_git_branch)\[\033[00m\]\$ '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u:$(short_pwd)$(parse_git_branch)\$ '
+    PS1='$(show_virtual_env)${debian_chroot:+($debian_chroot)}\u@\h:$(short_pwd)$(parse_git_branch)\$ '
 fi
 unset color_prompt force_color_prompt
 
