@@ -38,6 +38,14 @@
       command: ./scripts/install_neovim.sh
       stdout: true
       stderr: true
+    - description: Installing ripgrep
+      command: ./scripts/install_ripgrep.sh
+      stdout: true
+      stderr: true
+    - description: Installing lazygit
+      command: ./scripts/install_lazygit.sh
+      stdout: true
+      stderr: true
     - description: Installing vim-plug and Neovim plugins
       command: ./scripts/install_vim_plug.sh
       stdout: true

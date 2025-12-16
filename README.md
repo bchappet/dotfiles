@@ -8,7 +8,8 @@ Personal dotfiles managed with [dotbot](https://github.com/anishathalye/dotbot) 
 - **Neovim** installation and configuration with LSP, Treesitter, and Telescope
 - **Tmux** configuration with vim-style bindings and plugin manager (tpm)
 - **Python tools** (pyright, ruff) installed globally via `uv tool install`
-- **Environment-agnostic** - no virtual environments needed
+- **CLI tools** (ripgrep, lazygit) installed locally to `~/.local/bin`
+- **Environment-agnostic** - no virtual environments needed, no sudo required
 
 ## Contents
 
@@ -23,7 +24,6 @@ Personal dotfiles managed with [dotbot](https://github.com/anishathalye/dotbot) 
 - Git
 - curl
 - bash
-- sudo access (for Neovim installation to `/opt`)
 
 ## Installation
 
@@ -43,11 +43,13 @@ Run the installation script:
 ```
 
 This will:
-1. Download and install Neovim to `/opt/nvim-linux64`
-2. Create symlinks for dotfiles (bashrc, tmux.conf, nvim config)
-3. Install vim-plug and Neovim plugins
-4. Install tmux plugin manager (tpm) and plugins
-5. Install uv and Python tools (pyright, ruff) globally
+1. Create symlinks for dotfiles (bashrc, tmux.conf, nvim config)
+2. Install uv and Python tools (pyright, ruff) globally
+3. Install Tmux and tmux plugin manager (tpm)
+4. Download and install Neovim to `~/.local/nvim-linux64`
+5. Download and install ripgrep to `~/.local/bin`
+6. Download and install lazygit to `~/.local/bin`
+7. Install vim-plug and Neovim plugins
 
 ### After installation
 
@@ -60,7 +62,9 @@ source ~/.bashrc
 ## What gets installed
 
 ### Tools
-- **Neovim** - Latest stable release from GitHub
+- **Neovim** - Latest stable release from GitHub (installed to `~/.local/nvim-linux64`)
+- **ripgrep (rg)** - Fast grep alternative for code search (installed to `~/.local/bin`)
+- **lazygit** - Terminal UI for git commands (installed to `~/.local/bin`)
 - **uv** - Modern Python package manager
 - **pyright** - Python LSP server for Neovim
 - **ruff** - Python linter and formatter
@@ -72,15 +76,25 @@ source ~/.bashrc
 - Tmux configuration with vim-style bindings
 - Neovim configuration with LSP, Treesitter, Telescope
 
-## Python Tools
+## Updating Tools
+
+### Python Tools
 
 Python tools are installed globally using `uv tool install`, making them available system-wide without needing to activate a virtual environment. Tools are installed in `~/.local/bin` which is added to your PATH.
-
-To update Python tools:
 
 ```bash
 uv tool upgrade pyright
 uv tool upgrade ruff
+```
+
+### CLI Tools (ripgrep, lazygit)
+
+To update ripgrep or lazygit, simply delete the binary and re-run the install script:
+
+```bash
+rm ~/.local/bin/rg
+rm ~/.local/bin/lazygit
+./install
 ```
 
 ## Neovim Keybindings
@@ -186,6 +200,8 @@ dotfiles/
 ├── dotbot/                    # Dotbot submodule
 ├── scripts/
 │   ├── install_neovim.sh     # Neovim installation
+│   ├── install_ripgrep.sh    # ripgrep installation
+│   ├── install_lazygit.sh    # lazygit installation
 │   ├── setup_python.sh       # Python tools setup
 │   ├── install_vim_plug.sh   # vim-plug setup
 │   └── install_tmux.sh       # Tmux and plugin manager setup
