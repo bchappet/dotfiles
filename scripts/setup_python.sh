@@ -14,10 +14,6 @@ else
     echo "uv already installed"
 fi
 
-# Install Python tools globally using uv tool install
-echo "Installing pyright..."
-uv tool install pyright
-
 echo "Installing ruff..."
 uv tool install ruff
 
