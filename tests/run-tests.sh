@@ -12,6 +12,7 @@ NC='\033[0m' # No Color
 # Default options
 VERBOSE=false
 NO_CACHE=false
+UBUNTU_VERSION="22.04"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -24,13 +25,28 @@ while [[ $# -gt 0 ]]; do
             NO_CACHE=true
             shift
             ;;
+        --ubuntu-version)
+            UBUNTU_VERSION="$2"
+            if [[ "$UBUNTU_VERSION" != "18.04" && "$UBUNTU_VERSION" != "22.04" ]]; then
+                echo "Error: Unsupported Ubuntu version: $UBUNTU_VERSION"
+                echo "Supported versions: 18.04, 22.04"
+                exit 1
+            fi
+            shift 2
+            ;;
         --help|-h)
             echo "Usage: $0 [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  --verbose, -v Enable verbose output"
-            echo "  --no-cache    Force rebuild without using cache"
-            echo "  --help, -h    Show this help message"
+            echo "  --verbose, -v           Enable verbose output"
+            echo "  --no-cache              Force rebuild without using cache"
+            echo "  --ubuntu-version VER    Ubuntu version to test (18.04 or 22.04, default: 22.04)"
+            echo "  --help, -h              Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  $0                           # Test with Ubuntu 22.04 (default)"
+            echo "  $0 --ubuntu-version 18.04   # Test with Ubuntu 18.04"
+            echo "  $0 --ubuntu-version 18.04 --verbose   # Ubuntu 18.04 with verbose output"
             exit 0
             ;;
         *)
@@ -45,11 +61,17 @@ done
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# Docker image name
-IMAGE_NAME="dotfiles-test:ubuntu-22.04"
+# Docker image name and Dockerfile selection
+IMAGE_NAME="dotfiles-test:ubuntu-${UBUNTU_VERSION}"
+if [ "$UBUNTU_VERSION" = "18.04" ]; then
+    DOCKERFILE="tests/Dockerfile.ubuntu-18.04"
+else
+    DOCKERFILE="tests/Dockerfile"
+fi
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Dotfiles Installation Test Suite${NC}"
+echo -e "${BLUE}Ubuntu ${UBUNTU_VERSION}${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
 
@@ -96,16 +118,16 @@ cd "$REPO_ROOT"
 # Build the Docker image
 if [ "$VERBOSE" = true ]; then
     if [ "$NO_CACHE" = true ]; then
-        docker build --no-cache -f tests/Dockerfile -t "$IMAGE_NAME" .
+        docker build --no-cache -f "$DOCKERFILE" -t "$IMAGE_NAME" .
     else
-        docker build -f tests/Dockerfile -t "$IMAGE_NAME" .
+        docker build -f "$DOCKERFILE" -t "$IMAGE_NAME" .
     fi
     BUILD_EXIT_CODE=$?
 else
     if [ "$NO_CACHE" = true ]; then
-        docker build --no-cache -f tests/Dockerfile -t "$IMAGE_NAME" . 2>&1 | grep -E "(Step|Successfully|ERROR)"
+        docker build --no-cache -f "$DOCKERFILE" -t "$IMAGE_NAME" . 2>&1 | grep -E "(Step|Successfully|ERROR)"
     else
-        docker build -f tests/Dockerfile -t "$IMAGE_NAME" . 2>&1 | grep -E "(Step|Successfully|ERROR)"
+        docker build -f "$DOCKERFILE" -t "$IMAGE_NAME" . 2>&1 | grep -E "(Step|Successfully|ERROR)"
     fi
     BUILD_EXIT_CODE=${PIPESTATUS[0]}
 fi

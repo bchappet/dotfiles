@@ -34,8 +34,8 @@
       command: ./scripts/install_tmux.sh
       stdout: true
       stderr: true
-    - description: Installing Neovim
-      command: ./scripts/install_neovim.sh
+    - description: Installing Neovim (auto-detecting Ubuntu version)
+      command: ./scripts/install_neovim_auto.sh
       stdout: true
       stderr: true
     - description: Installing ripgrep
