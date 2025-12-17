@@ -56,7 +56,6 @@ Plug('alexghergh/nvim-tmux-navigation')
 Plug('nvim-lualine/lualine.nvim')
 Plug('nvim-tree/nvim-web-devicons')
 Plug('mason-org/mason.nvim')
-Plug('williamboman/mason-lspconfig.nvim')
 -- Mini stuff (dependencies for completion)
 Plug('nvim-mini/mini.icons')
 Plug('nvim-mini/mini.snippets')
@@ -66,16 +65,17 @@ Plug('tpope/vim-fugitive')
 
 vim.call('plug#end')
 
--- Configure Mason
-require('mason').setup()
-require('mason-lspconfig').setup({
-  ensure_installed = { 'pyright', 'ruff' },
-  automatic_installation = true,
+-- Optional: Only required if you need to update the language server settings
+vim.lsp.config('ty', {
+  settings = {
+    ty = {
+      -- ty language server settings go here
+    }
+  }
 })
 
 -- Configure LSP
-vim.lsp.enable('pyright')
-vim.lsp.enable('ruff')
+vim.lsp.enable('ty')
 
 -- LSP navigation
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, opt)
